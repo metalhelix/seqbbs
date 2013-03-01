@@ -2,7 +2,7 @@
 #'
 #'
 setwd("~/code/R/seqbbs/")
-ratios <- read.table("test/test.txt", header = FALSE)
+#ratios <- read.table("test/test.txt", header = FALSE)
 
 seqbbs <- function(ratios, window = 12, threshold = 0.70) {
   
@@ -166,15 +166,30 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
   # original: counter
   thresholded_iv <- max_posteriors >= threshold
   max_posteriors_thresholded <- max_posteriors[thresholded_iv]
+  change_points_thresholded <- change_points[thresholded_iv]
   counter <- sum(thresholded_iv)
+
+  opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
+  plot(1:size, log_ratios,  pch = 18, col = "blue")
+  #points(change_points, log_ratios[change_points], pch = 1, col = "red")
+  points(change_points_thresholded, log_ratios[change_points_thresholded], pch = 1, col = 'red')
+
+  bars <- c(0, change_points_thresholded ,size)
+  for(k in 1:(counter + 1)) {
+    xbar = sum(log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))
+    segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = 'red') 
+  }
   
-  
+  barplot(all_posteriors)
+  par(opar)
 #   list(change_points, max_posteriors, all_posteriors)
   list(windows_sum, max_posteriors, change_points)
 } #end function
 
 ratios <- read.table("tests/test.txt", header = FALSE)
-window <- 12
-threshold <- 0.70
+window <- 20
+threshold <- 0.55
 results <- seqbbs(ratios, window = window, threshold = threshold)
+
+
 
