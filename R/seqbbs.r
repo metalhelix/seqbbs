@@ -1,9 +1,17 @@
+#' Runs SeqBBS algorithm on pre-calculated ratios
 #'
+#' Details on this algorithm.
 #'
-#'
-setwd("~/code/R/seqbbs/")
-#ratios <- read.table("test/test.txt", header = FALSE)
-
+#' @param ratios precomputed ratios between samples
+#' @param window window size to use.
+#'    Expected range: 12 - 20  
+#' @param threshold threshold value for the posterior probability.
+#'    Expected range: 0.55 - 0.95
+#' @export
+#' @return list
+#' @examples
+#' ratios <- c(0.2, 0.3, 0.4, 0.6)
+#' seqbbs(ratios, window = 2, threshold = 0.8)
 seqbbs <- function(ratios, window = 12, threshold = 0.70) {
   
   # TODO: be flexible about input type or
@@ -186,10 +194,6 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
   list(windows_sum, max_posteriors, change_points)
 } #end function
 
-ratios <- read.table("tests/test.txt", header = FALSE)
-window <- 20
-threshold <- 0.55
-results <- seqbbs(ratios, window = window, threshold = threshold)
 
 
 

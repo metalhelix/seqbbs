@@ -1,0 +1,10 @@
+seqbbs 0.0.1
+============
+
+* initial functionality of seqbbs
+
+* not returning correct output from function
+
+* appears to create plot correctly
+
+* no labels on plot
