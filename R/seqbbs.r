@@ -197,7 +197,7 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
   seqbbs_out
 } #end function
 
-changepoints <- function(seqbbs_data, threshold = 0.7) {
+changepoints <- function(seqbbs_data, threshold = seqbbs_data@threshold) {
   thresholded_iv <- seqbbs_data@max_posteriors >= threshold
   change_points_thresholded <- seqbbs_data@change_points[thresholded_iv]
   log_ratios_thresholded <- seqbbs_data@log_ratios[change_points_thresholded]
@@ -219,13 +219,13 @@ plot_changepoints <- function(seqbbs_data,
   thresholded_changepoints <- changepoints(seqbbs_data, threshold = threshold)
   
   #opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
-  plot(1:size, seqbbs_data@log_ratios,  pch = base_pch, col = basecol, ...)
+  plot(1:length(seqbbs_data@log_ratios), seqbbs_data@log_ratios,  pch = base_pch, col = basecol, ...)
   #points(change_points, log_ratios[change_points], pch = 1, col = "red")
   points(thresholded_changepoints$changepoints, thresholded_changepoints$log_ratios, pch = pch, col = col)
   
   if(show_bars) {
-    bars <- c(0, change_points_thresholded ,size)
-    for(k in 1:(length(change_points_thresholded) + 1)) {
+    bars <- c(0, thresholded_changepoints$changepoints, length(seqbbs_data@log_ratios))
+    for(k in 1:(length(thresholded_changepoints$changepoints) + 1)) {
       xbar = sum(seqbbs_data@log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))
       segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = 'red') 
     }
