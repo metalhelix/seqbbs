@@ -1,3 +1,18 @@
+
+setClass( "SeqBBSData",
+          representation = representation(
+            window = "numeric",
+            threshold = "numeric",
+            log_ratios = "numeric",
+            all_posteriors = "matrix",
+            max_posteriors = 'numeric',
+            change_points = 'numeric'
+            )
+          )
+
+
+
+
 #' Runs SeqBBS algorithm on pre-calculated ratios
 #'
 #' Details on this algorithm.
@@ -170,30 +185,75 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
       
   } #end for k
 
-  # is the total number of breakpoints found for the given threshold
-  # original: counter
-  thresholded_iv <- max_posteriors >= threshold
-  max_posteriors_thresholded <- max_posteriors[thresholded_iv]
-  change_points_thresholded <- change_points[thresholded_iv]
-  counter <- sum(thresholded_iv)
-
-  opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
-  plot(1:size, log_ratios,  pch = 18, col = "blue")
-  #points(change_points, log_ratios[change_points], pch = 1, col = "red")
-  points(change_points_thresholded, log_ratios[change_points_thresholded], pch = 1, col = 'red')
-
-  bars <- c(0, change_points_thresholded ,size)
-  for(k in 1:(counter + 1)) {
-    xbar = sum(log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))
-    segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = 'red') 
-  }
   
-  barplot(all_posteriors)
-  par(opar)
-#   list(change_points, max_posteriors, all_posteriors)
-  list(windows_sum, max_posteriors, change_points)
+  seqbbs_out = new("SeqBBSData", window = window,
+                  threshold = threshold,
+                  log_ratios = log_ratios, 
+                  all_posteriors = all_posteriors,
+                  max_posteriors = max_posteriors,
+                  change_points = change_points)
+  
+ 
+  seqbbs_out
 } #end function
 
+changepoints <- function(seqbbs_data, threshold = 0.7) {
+  thresholded_iv <- seqbbs_data@max_posteriors >= threshold
+  change_points_thresholded <- seqbbs_data@change_points[thresholded_iv]
+  log_ratios_thresholded <- seqbbs_data@log_ratios[change_points_thresholded]
+  
+  out <- data.frame('changepoints' = change_points_thresholded, 'log_ratios' = log_ratios_thresholded)
+  out
+}
 
+plot_changepoints <- function(seqbbs_data, 
+                              threshold = seqbbs_data@threshold,
+                           col = 'red',
+                           pch = 1,
+                           basecol = 'blue',
+                           base_pch = 18,
+                           xlab = 'Genomic Position',
+                           ylab = 'Log2 Ratio of Reads',
+                           show_bars = TRUE, ...) {
+    
+  thresholded_changepoints <- changepoints(seqbbs_data, threshold = threshold)
+  
+  #opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
+  plot(1:size, seqbbs_data@log_ratios,  pch = base_pch, col = basecol, ...)
+  #points(change_points, log_ratios[change_points], pch = 1, col = "red")
+  points(thresholded_changepoints$changepoints, thresholded_changepoints$log_ratios, pch = pch, col = col)
+  
+  if(show_bars) {
+    bars <- c(0, change_points_thresholded ,size)
+    for(k in 1:(length(change_points_thresholded) + 1)) {
+      xbar = sum(seqbbs_data@log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))
+      segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = 'red') 
+    }
+  }
+  
+  #barplot(seqbbs_data@all_posteriors)
+  #par(opar)
+}
 
+plot_posteriors <- function(seqbbs_data,
+                            xlab = 'Genomic Position, 100kb',
+                            ylab = 'Posterior Probs, all windows', ...) {
+  barplot(seqbbs_data@all_posteriors, xlab = xlab, ylab = ylab, ...)
+}
 
+threshold <- 0.7
+window <- 12
+
+test_filename <- paste("inst","extdata", "test.txt", sep="/")
+ratios <- read.table(test_filename, header = FALSE)
+
+seqbbs_data <- seqbbs(ratios, window = window, threshold = threshold)
+
+#class(seq_out)
+
+opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
+plot_changepoints(seqbbs_data)
+plot_posteriors(seqbbs_data)
+par(opar)
+
+#par(mfcol=c(1,1), mar = c(1,1,1,1))
