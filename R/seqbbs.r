@@ -213,10 +213,10 @@ changepoints <- function(seqbbs_data, threshold = seqbbs_data@threshold, confide
     mean_ratios[k] <- 2 ^ (log_ratios_thresholded_means[k] + ((threshold_sd)^2) / 2)
     
     lcl <- log_ratios_thresholded_means[k] - qnorm(0.5 + confidence / 2) * threshold_sd / sqrt_diff
-    lower_cis[k] <- 2 ^ (lcl * 2 ^ ((threshold_sd ^ 2) / 2))
+    lower_cis[k] <- 2 ^ (lcl) * 2 ^ ((threshold_sd ^ 2) / 2)
     
     ucl <- log_ratios_thresholded_means[k] + qnorm(0.5 + confidence / 2) * threshold_sd / sqrt_diff
-    upper_cis[k] <- 2 ^ (ucl * 2 ^ ((threshold_sd ^ 2) / 2))
+    upper_cis[k] <- 2 ^ (ucl) * 2 ^ ((threshold_sd ^ 2) / 2)
   }
   
   out <- data.frame('changepoints' = c(0,change_points_thresholded), 
@@ -262,10 +262,10 @@ plot_posteriors <- function(seqbbs_data,
   barplot(seqbbs_data@all_posteriors, xlab = xlab, ylab = ylab, ...)
 }
 
-threshold <- 0.55
+threshold <- 0.70
 window <- 20
 
-test_filename <- paste("inst","extdata", "test.txt", sep="/")
+test_filename <- paste("inst","extdata", "paper.txt", sep="/")
 ratios <- read.table(test_filename, header = FALSE)
 
 seqbbs_data <- seqbbs(ratios, window = window, threshold = threshold)
