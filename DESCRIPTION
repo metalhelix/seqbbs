@@ -1,11 +1,11 @@
 Package: seqbbs
 Type: Package
 Title: Bayesian breakpoints searching algorithm for SNVs
-Version: 0.0.1
+Version: 0.0.2
 Date: 2013-02-20
-Author: Jie Chen <jch@stowers.org>, Jim Vallandingham <jfv@stowers.org>
+Author: Jie Chen <jch@stowers.org>, Jim Vallandingham <jfv@stowers.org>, Hua Li <hul@stowers.org>
 Maintainer: Jim Vallandingham <jfv@stowers.org>
-Description: More about what it does (maybe more than one line)
+Description: Implementation of a statistical change point model to help detect CNVs using the ratio of sequencing reads.
 License: GPL-2
 Collate:
     'seqbbs.r'

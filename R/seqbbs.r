@@ -185,7 +185,6 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
       
   } #end for k
 
-  
   seqbbs_out = new("SeqBBSData", window = window,
                   threshold = threshold,
                   log_ratios = log_ratios, 
@@ -193,16 +192,38 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
                   max_posteriors = max_posteriors,
                   change_points = change_points)
   
- 
   seqbbs_out
 } #end function
 
-changepoints <- function(seqbbs_data, threshold = seqbbs_data@threshold) {
+changepoints <- function(seqbbs_data, threshold = seqbbs_data@threshold, confidence = 0.95) {
   thresholded_iv <- seqbbs_data@max_posteriors >= threshold
   change_points_thresholded <- seqbbs_data@change_points[thresholded_iv]
   log_ratios_thresholded <- seqbbs_data@log_ratios[change_points_thresholded]
+  cp_extended <- c(0, change_points_thresholded, length(seqbbs_data@log_ratios))
   
-  out <- data.frame('changepoints' = change_points_thresholded, 'log_ratios' = log_ratios_thresholded)
+  log_ratios_thresholded_means = c()
+  mean_ratios = c()
+  lower_cis = c()
+  upper_cis = c()
+  for(k in 1:(length(change_points_thresholded) + 1)) {
+    diff <- (cp_extended[k + 1] - cp_extended[k])
+    sqrt_diff <- sqrt(diff)
+    log_ratios_thresholded_means[k] <- sum(seqbbs_data@log_ratios[(cp_extended[k] + 1):cp_extended[k + 1]] / diff)
+    threshold_sd <- sd(seqbbs_data@log_ratios[((cp_extended[k] + 1):cp_extended[k + 1])])
+    mean_ratios[k] <- 2 ^ (log_ratios_thresholded_means[k] + ((threshold_sd)^2) / 2)
+    
+    lcl <- log_ratios_thresholded_means[k] - qnorm(0.5 + confidence / 2) * threshold_sd / sqrt_diff
+    lower_cis[k] <- 2 ^ (lcl * 2 ^ ((threshold_sd ^ 2) / 2))
+    
+    ucl <- log_ratios_thresholded_means[k] + qnorm(0.5 + confidence / 2) * threshold_sd / sqrt_diff
+    upper_cis[k] <- 2 ^ (ucl * 2 ^ ((threshold_sd ^ 2) / 2))
+  }
+  
+  out <- data.frame('changepoints' = c(0,change_points_thresholded), 
+                    'log_mean_ratios' = log_ratios_thresholded_means, 
+                    'mean_ratios' =  mean_ratios,
+                    'confidence_lower_bounds' = lower_cis,
+                    'confidence_upper_bounds' = upper_cis)
   out
 }
 
@@ -214,21 +235,21 @@ plot_changepoints <- function(seqbbs_data,
                            base_pch = 18,
                            xlab = 'Genomic Position',
                            ylab = 'Log2 Ratio of Reads',
-                           show_bars = TRUE, ...) {
+                           show_means = TRUE, ...) {
     
   thresholded_changepoints <- changepoints(seqbbs_data, threshold = threshold)
   
   #opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
   plot(1:length(seqbbs_data@log_ratios), seqbbs_data@log_ratios,  pch = base_pch, col = basecol, ...)
   #points(change_points, log_ratios[change_points], pch = 1, col = "red")
-  points(thresholded_changepoints$changepoints, thresholded_changepoints$log_ratios, pch = pch, col = col)
+  points(thresholded_changepoints$changepoints, thresholded_changepoints$log_mean_ratios, pch = pch, col = col)
   
-  if(show_bars) {
-    bars <- c(0, thresholded_changepoints$changepoints, length(seqbbs_data@log_ratios))
-    for(k in 1:(length(thresholded_changepoints$changepoints) + 1)) {
-      xbar = sum(seqbbs_data@log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))
-      segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = 'red') 
-    }
+  if(show_means) {
+    
+#     for(k in 1:(length(thresholded_changepoints$changepoints) + 1)) {
+#       
+#       segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = col) 
+#     }
   }
   
   #barplot(seqbbs_data@all_posteriors)
@@ -241,8 +262,8 @@ plot_posteriors <- function(seqbbs_data,
   barplot(seqbbs_data@all_posteriors, xlab = xlab, ylab = ylab, ...)
 }
 
-threshold <- 0.7
-window <- 12
+threshold <- 0.55
+window <- 20
 
 test_filename <- paste("inst","extdata", "test.txt", sep="/")
 ratios <- read.table(test_filename, header = FALSE)
@@ -255,5 +276,9 @@ opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
 plot_changepoints(seqbbs_data)
 plot_posteriors(seqbbs_data)
 par(opar)
+
+thresholded_changepoints <- changepoints(seqbbs_data, threshold = threshold)
+
+thresholded_changepoints
 
 #par(mfcol=c(1,1), mar = c(1,1,1,1))
