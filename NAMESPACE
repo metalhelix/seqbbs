@@ -1,1 +1,4 @@
+export(changepoints)
+export(plot_changepoints)
+export(plot_posteriors)
 export(seqbbs)

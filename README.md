@@ -8,11 +8,13 @@ To install the latest (potentially unstable) version, try using [devtools](https
 
     install.packages("devtools")
     library(devtools)
-    install_github('seqbbs')
+    install_github('seqbbs', username = 'metalhelix')
 
 ## Use
 
 `seqbbs` function runs main algorithm, returning a SeqBBSData object:
+
+    library('seqbbs')
 
     ratios <- c(0.2, 0.3, 0.4, 0.6)
     data <- seqbbs(ratios, window = 2, threshold = 0.8)

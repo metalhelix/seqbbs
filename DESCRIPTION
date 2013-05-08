@@ -3,9 +3,11 @@ Type: Package
 Title: Bayesian breakpoints searching algorithm for SNVs
 Version: 0.0.3
 Date: 2013-02-20
-Author: Jie Chen <jch@stowers.org>, Jim Vallandingham <jfv@stowers.org>, Hua Li <hul@stowers.org>
+Author: Jie Chen <jch@stowers.org>, Jim Vallandingham <jfv@stowers.org>, Hua Li
+    <hul@stowers.org>
 Maintainer: Jim Vallandingham <jfv@stowers.org>
-Description: Implementation of a statistical change point model to help detect CNVs using the ratio of sequencing reads.
+Description: Implementation of a statistical change point model to help detect
+    CNVs using the ratio of sequencing reads.
 License: GPL-2
 Collate:
     'seqbbs.r'

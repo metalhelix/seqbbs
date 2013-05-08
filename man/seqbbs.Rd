@@ -14,7 +14,7 @@
   probability.  Expected range: 0.55 - 0.95}
 }
 \value{
-  list
+  SeqBBSData object with all data
 }
 \description{
   Details on this algorithm.
