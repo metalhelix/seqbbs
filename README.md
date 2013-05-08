@@ -14,8 +14,8 @@ To install the latest (potentially unstable) version, try using [devtools](https
 
 `seqbbs` function runs main algorithm, returning a SeqBBSData object:
 
-   ratios <- c(0.2, 0.3, 0.4, 0.6)
-   data <- seqbbs(ratios, window = 2, threshold = 0.8)
+    ratios <- c(0.2, 0.3, 0.4, 0.6)
+    data <- seqbbs(ratios, window = 2, threshold = 0.8)
 
 You can plot that data directly using `plot_changepoints` and/or `plot_posteriors`:
 
@@ -25,5 +25,7 @@ You can plot that data directly using `plot_changepoints` and/or `plot_posterior
 You can also get a dataframe of changepoints, given a particular threshold
 
     results <- changepoints(data)
+
+
 
     
