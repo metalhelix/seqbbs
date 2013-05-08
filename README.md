@@ -6,9 +6,9 @@ R package to accompany paper:
 
 To install the latest (potentially unstable) version, try using [devtools](https://github.com/hadley/devtools):
 
-   install.packages("devtools")
-   library(devtools)
-   install_github('seqbbs')
+    install.packages("devtools")
+    library(devtools)
+    install_github('seqbbs')
 
 ## Use
 
