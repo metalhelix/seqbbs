@@ -1,7 +1,7 @@
 Package: seqbbs
 Type: Package
 Title: Bayesian breakpoints searching algorithm for SNVs
-Version: 0.0.2
+Version: 0.0.3
 Date: 2013-02-20
 Author: Jie Chen <jch@stowers.org>, Jim Vallandingham <jfv@stowers.org>, Hua Li <hul@stowers.org>
 Maintainer: Jim Vallandingham <jfv@stowers.org>
