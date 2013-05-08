@@ -19,7 +19,7 @@ To install the latest (potentially unstable) version, try using [devtools](https
     test_filename <- system.file("extdata", "paper.txt", package="seqbbs")
     ratios <- read.table(test_filename, header = FALSE)
 
-    data <- seqbbs(ratios, window = 2, threshold = 0.8)
+    data <- seqbbs(ratios, window = 20, threshold = 0.7)
 
 You can plot that data directly using `plot_changepoints` and/or `plot_posteriors`:
 
