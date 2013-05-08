@@ -27,5 +27,7 @@ You can also get a dataframe of changepoints, given a particular threshold
     results <- changepoints(data)
 
 
+## Ratio Input
 
+`seqbbs` requires a list of ratios. This can be produced from a BAM file in the following way:
     
