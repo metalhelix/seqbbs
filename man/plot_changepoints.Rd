@@ -6,10 +6,11 @@
     threshold = seqbbs_data@threshold, col = "red",
     pch = 1, basecol = "blue", basepch = 18,
     xlab = "Genomic Position",
-    ylab = "Log2 Ratio of Reads", show_means = TRUE, ...)
+    ylab = "Log2 Ratio of Reads", means = TRUE,
+    meancol = "red", ...)
 }
 \arguments{
-  \item{seqbbs}{SeqBBSData object to work on.  Created
+  \item{seqbbs_data}{SeqBBSData object to work on.  Created
   using seqbbs function.}
 
   \item{threshold}{threshold value for the posterior
@@ -28,7 +29,9 @@
 
   \item{ylab}{y axis label}
 
-  \item{show_means}{display mean lines or not}
+  \item{means}{display mean lines or not}
+
+  \item{meancol}{color to use for mean lines if displayed}
 
   \item{...}{other options passed into plot function}
 }

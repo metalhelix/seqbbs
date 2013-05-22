@@ -6,7 +6,7 @@
     threshold = seqbbs_data@threshold, confidence = 0.95)
 }
 \arguments{
-  \item{seqbbs}{SeqBBSData object to work on.  Created
+  \item{seqbbs_data}{SeqBBSData object to work on.  Created
   using seqbbs function.}
 
   \item{threshold}{threshold value for the posterior

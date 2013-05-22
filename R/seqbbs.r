@@ -12,7 +12,7 @@ setClass( "SeqBBSData",
 
 #' Runs SeqBBS algorithm on pre-calculated ratios
 #'
-#' Details on this algorithm.
+#' Details on this algorithm. found here:
 #'
 #' @param ratios precomputed ratios between samples
 #' @param window window size to use.
@@ -195,7 +195,7 @@ seqbbs <- function(ratios, window = 12, threshold = 0.70) {
 #' Pulls out change points from sebbs data given a threshold
 #'
 #'
-#' @param seqbbs SeqBBSData object to work on.
+#' @param seqbbs_data SeqBBSData object to work on.
 #'    Created using seqbbs function.
 #' @param threshold threshold value for the posterior probability.
 #'    Expected range: 0.55 - 0.95
@@ -242,7 +242,7 @@ changepoints <- function(seqbbs_data, threshold = seqbbs_data@threshold, confide
 
 #' Plots data along with changepoints at a particular threshold
 #'
-#' @param seqbbs SeqBBSData object to work on.
+#' @param seqbbs_data SeqBBSData object to work on.
 #'    Created using seqbbs function.
 #' @param threshold threshold value for the posterior probability.
 #'    Expected range: 0.55 - 0.95
@@ -253,41 +253,40 @@ changepoints <- function(seqbbs_data, threshold = seqbbs_data@threshold, confide
 #' @param basepch symbol to use for underlying data
 #' @param xlab x axis label
 #' @param ylab y axis label
-#' @param show_means display mean lines or not
+#' @param means display mean lines or not
+#' @param meancol color to use for mean lines if displayed
 #' @param ... other options passed into plot function
 #' @export
 plot_changepoints <- function(seqbbs_data, 
                               threshold = seqbbs_data@threshold,
-                           col = 'red',
-                           pch = 1,
-                           basecol = 'blue',
-                           basepch = 18,
-                           xlab = 'Genomic Position',
-                           ylab = 'Log2 Ratio of Reads',
-                           show_means = TRUE, ...) {
+                              col = 'red',
+                              pch = 1,
+                              basecol = 'blue',
+                              basepch = 18,
+                              xlab = 'Genomic Position',
+                              ylab = 'Log2 Ratio of Reads',
+                              means = TRUE,
+                              meancol = 'red', ...) {
     
   thresholded_changepoints <- changepoints(seqbbs_data, threshold = threshold)
   
-  #opar <- par(mfcol=c(2,1), mar = c(0, 0, 0, 0) + 2)
-  plot(1:length(seqbbs_data@log_ratios), seqbbs_data@log_ratios,  pch = basepch, col = basecol, ...)
-  #points(change_points, log_ratios[change_points], pch = 1, col = "red")
+  plot(1:length(seqbbs_data@log_ratios), seqbbs_data@log_ratios,  pch = basepch, col = basecol, ...)  
   points(thresholded_changepoints$loci, thresholded_changepoints$log_mean_ratio, pch = pch, col = col)
   
-  if(show_means) {
-    
-#     for(k in 1:(length(thresholded_changepoints$loci) + 1)) {
-#       
-#       segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = col) 
-#     }
-  }
-  
-  #barplot(seqbbs_data@all_posteriors)
-  #par(opar)
+  if(means) {
+    bars <- c(thresholded_changepoints$loci, length(seqbbs_data@log_ratios))
+    for(k in 1:(length(thresholded_changepoints$loci))) {
+      # xbar = sum(log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))      
+      # segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = col) 
+      xbar <- sum(seqbbs_data@log_ratios[(bars[k] + 1):bars[k + 1]] / (bars[k + 1] - bars[k]))
+      segments(bars[k] + 1, xbar, bars[k + 1], xbar, col = meancol)
+    }
+  }  
 }
 
 #' Plots posteriors for SeqBBSData
 #'
-#' @param seqbbs SeqBBSData object to work on.
+#' @param seqbbs_data SeqBBSData object to work on.
 #'    Created using seqbbs function.
 #' @param xlab x axis label
 #' @param ylab y axis label
@@ -299,9 +298,11 @@ plot_posteriors <- function(seqbbs_data,
   barplot(seqbbs_data@all_posteriors, xlab = xlab, ylab = ylab, ...)
 }
 
+# ----
+
 # threshold <- 0.70
 # window <- 20
-
+# 
 # test_filename <- paste("inst","extdata", "paper.txt", sep="/")
 # ratios <- read.table(test_filename, header = FALSE)
 # 

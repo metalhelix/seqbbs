@@ -17,7 +17,7 @@
   SeqBBSData object with all data
 }
 \description{
-  Details on this algorithm.
+  Details on this algorithm. found here:
 }
 \examples{
 ratios <- c(0.2, 0.3, 0.4, 0.6)

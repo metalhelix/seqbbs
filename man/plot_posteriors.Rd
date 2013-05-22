@@ -7,7 +7,7 @@
     ylab = "Posterior Probs, all windows", ...)
 }
 \arguments{
-  \item{seqbbs}{SeqBBSData object to work on.  Created
+  \item{seqbbs_data}{SeqBBSData object to work on.  Created
   using seqbbs function.}
 
   \item{xlab}{x axis label}
